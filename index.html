@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="个人网站与简历展示，包含个人简介、工作经历、项目经验和联系方式。"
+    />
+    <title>Alex Chen | 个人网站</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="#top" class="brand">Alex<span>Chen</span></a>
+        <nav class="main-nav" aria-label="主导航">
+          <a href="#about">关于</a>
+          <a href="#experience">经历</a>
+          <a href="#projects">项目</a>
+          <a href="#skills">技能</a>
+          <a href="#contact">联系</a>
+        </nav>
+        <a href="#contact" class="button button-small">联系我</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy reveal">
+            <p class="eyebrow">Product Engineer / Front-end Developer</p>
+            <h1>让复杂的想法，变成简单而有价值的产品。</h1>
+            <p class="lead">
+              我是 Alex，一个热爱构建体验、优化业务流程和持续学习的开发者。
+              擅长将设计与技术结合，交付可维护、具备商业价值的数字产品。
+            </p>
+            <div class="hero-actions">
+              <a class="button" href="#projects">查看项目</a>
+              <a class="button button-secondary" href="#resume">简历下载</a>
+            </div>
+            <ul class="mini-stats" aria-label="个人亮点">
+              <li><strong>5+</strong><span>年开发经验</span></li>
+              <li><strong>20+</strong><span>项目交付</span></li>
+              <li><strong>6</strong><span>核心技术栈</span></li>
+            </ul>
+          </div>
+
+          <div class="hero-card reveal">
+            <div class="avatar-wrap">
+              <div class="avatar">AC</div>
+            </div>
+            <div class="card-info">
+              <span class="tag">Available for work</span>
+              <h2>Alex Chen</h2>
+              <p>前端开发工程师 / 产品设计师</p>
+            </div>
+            <div class="info-list">
+              <div>
+                <label>城市</label>
+                <span>上海</span>
+              </div>
+              <div>
+                <label>邮箱</label>
+                <span>hello@alexchen.dev</span>
+              </div>
+              <div>
+                <label>GitHub</label>
+                <span>github.com/alexchen</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section">
+        <div class="container narrow">
+          <div class="section-heading reveal">
+            <p class="eyebrow">About</p>
+            <h2>关于我</h2>
+          </div>
+          <div class="about-box reveal">
+            <p>
+              我在数字产品开发领域专注于前端与产品实现，热衷于提升用户体验、优化产品流程和帮助业务快速落地。
+              从个人项目到企业级应用，我都喜欢把抽象需求转化为清晰、稳定、可扩展的产品能力。
+            </p>
+            <p>
+              目前关注用户体验设计、前端工程化、可视化交互和性能优化，追求既美观又高效的实现方式。
+              我相信优秀的产品不是“做出来”，而是“用起来顺，维护起来稳，迭代起来快”。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="experience" class="section muted">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Experience</p>
+            <h2>工作经历</h2>
+          </div>
+
+          <div class="timeline reveal">
+            <article class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="meta-row">
+                  <h3>高级前端工程师</h3>
+                  <span>2022 - 现在</span>
+                </div>
+                <p class="company">Nova Studio</p>
+                <ul>
+                  <li>负责企业级 SaaS 平台前端架构设计与组件库建设，提升开发效率 35%。</li>
+                  <li>主导设计系统落地，统一视觉规范与交互模式，降低跨团队协同成本。</li>
+                  <li>优化页面性能与首屏加载体验，提升核心页面 Lighthouse 评分 20 分以上。</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="meta-row">
+                  <h3>前端开发工程师</h3>
+                  <span>2019 - 2022</span>
+                </div>
+                <p class="company">Bright Digital</p>
+                <ul>
+                  <li>开发 B2B 管理后台与运营分析平台，覆盖数据可视化、权限控制与多角色协作。</li>
+                  <li>与产品经理、设计师和后端协作，推进需求评审、迭代和交付。</li>
+                  <li>负责应用状态管理与接口联调，减少线上问题率并提升维护性。</li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects" class="section">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Projects</p>
+            <h2>项目经验</h2>
+          </div>
+
+          <div class="projects-grid">
+            <article class="project-card reveal">
+              <div class="project-top">
+                <span class="project-tag">SaaS</span>
+                <span class="project-year">2024</span>
+              </div>
+              <h3>智能运营后台</h3>
+              <p>
+                面向中型企业的运营管理平台，支持数据看板、任务流转和自动化报表生成。
+              </p>
+              <ul>
+                <li>Vue 3 + TypeScript</li>
+                <li>可视化报表与权限管理</li>
+                <li>模块化组件设计</li>
+              </ul>
+            </article>
+
+            <article class="project-card reveal">
+              <div class="project-top">
+                <span class="project-tag">E-commerce</span>
+                <span class="project-year">2023</span>
+              </div>
+              <h3>会员增长平台</h3>
+              <p>
+                帮助电商团队提升用户留存与活动运营效率，整合会员数据、活动配置和收益追踪。
+              </p>
+              <ul>
+                <li>React + NestJS</li>
+                <li>活动配置中心</li>
+                <li>数据驱动决策支持</li>
+              </ul>
+            </article>
+
+            <article class="project-card reveal">
+              <div class="project-top">
+                <span class="project-tag">UX</span>
+                <span class="project-year">2022</span>
+              </div>
+              <h3>智能文档协作工具</h3>
+              <p>
+                主打团队协同、内容评审和知识沉淀，优化跨部门文档流转效率。
+              </p>
+              <ul>
+                <li>响应式交互设计</li>
+                <li>评审流程建模</li>
+                <li>提升团队协作体验</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills" class="section muted">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Skills</p>
+            <h2>核心技能</h2>
+          </div>
+
+          <div class="skills-grid reveal">
+            <div class="skill-box"><span>HTML / CSS</span></div>
+            <div class="skill-box"><span>JavaScript</span></div>
+            <div class="skill-box"><span>TypeScript</span></div>
+            <div class="skill-box"><span>React</span></div>
+            <div class="skill-box"><span>Vue</span></div>
+            <div class="skill-box"><span>Node.js</span></div>
+            <div class="skill-box"><span>Figma</span></div>
+            <div class="skill-box"><span>Git</span></div>
+            <div class="skill-box"><span>性能优化</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="resume" class="section">
+        <div class="container narrow resume-box reveal">
+          <div>
+            <p class="eyebrow">Resume</p>
+            <h2>简历与联系方式</h2>
+          </div>
+          <p>
+            我正在寻找前端 / 产品工程相关岗位，欢迎交流合作机会。<br />
+            期待与你一起打造更好的用户体验与业务价值。
+          </p>
+          <a href="mailto:hello@alexchen.dev" class="button">hello@alexchen.dev</a>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact" class="site-footer">
+      <div class="container footer-wrap">
+        <p>© <span id="year"></span> Alex Chen</p>
+        <div class="socials">
+          <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="mailto:hello@alexchen.dev">Email</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
