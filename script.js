@@ -1,5 +1,7 @@
 // ===== 游戏配置：加作物、菜谱、调数值都在这里 =====
-const LOCATION = { lat: 41.8, lon: 123.4, name: '沈阳' }; // 天气所用城市的经纬度，可改成你的城市
+// 脚本出错时把错误显示在页面上，方便排查
+window.addEventListener('error', (e) => { const m = document.getElementById('msg'); if (m) m.textContent = '脚本出错：' + e.message; });
+
 
 const CROPS = {
   carrot: { name: '胡萝卜', icon: '🥕', seed: 5,  time: 15, sell: 8,  rare: { name: '金胡萝卜', icon: '🥕✨' } },
@@ -9,11 +11,18 @@ const CROPS = {
 const RARE_MULT = 10; // 稀有作物卖价倍数
 
 const RECIPES = [
-  { id: 'salad', name: '蔬菜沙拉', icon: '🥗', need: { carrot: 2, tomato: 1 }, price: 50 },
-  { id: 'juice', name: '番茄汁',   icon: '🧃', need: { tomato: 2 },            price: 70 },
-  { id: 'stew',  name: '蔬菜炖锅', icon: '🥘', need: { carrot: 1, tomato: 1, corn: 1 }, price: 110 },
-  { id: 'soup',  name: '玉米浓汤', icon: '🍲', need: { corn: 2, carrot: 1 },   price: 150 },
+  { id: 'cake',   name: '胡萝卜蛋糕', icon: '🍰', need: { carrot: 3 },                     price: 40 },
+  { id: 'salad',  name: '蔬菜沙拉',   icon: '🥗', need: { carrot: 2, tomato: 1 },          price: 50 },
+  { id: 'juice',  name: '番茄汁',     icon: '🧃', need: { tomato: 2 },                     price: 70 },
+  { id: 'popcorn',name: '爆米花',     icon: '🍿', need: { corn: 1 },                       price: 75 },
+  { id: 'curry',  name: '咖喱饭',     icon: '🍛', need: { carrot: 2, corn: 1 },            price: 100 },
+  { id: 'stew',   name: '蔬菜炖锅',   icon: '🥘', need: { carrot: 1, tomato: 1, corn: 1 }, price: 110 },
+  { id: 'sauce',  name: '番茄酱',     icon: '🥫', need: { tomato: 3 },                     price: 110 },
+  { id: 'cornpie',name: '玉米饼',     icon: '🫓', need: { corn: 2 },                       price: 130 },
+  { id: 'pizza',  name: '披萨',       icon: '🍕', need: { tomato: 2, corn: 1 },            price: 140 },
+  { id: 'soup',   name: '玉米浓汤',   icon: '🍲', need: { corn: 2, carrot: 1 },            price: 150 },
 ];
+const WHO = ['🧑', '👩', '👨', '🧓', '👧', '👦', '👵', '🧔']; // 顾客形象
 
 const ORDER_REWARD = 1.5;   // 订单奖励 = 菜价 × 1.5
 const ORDER_TIME = 120;     // 顾客等待秒数
@@ -22,8 +31,8 @@ const MAX_ORDERS = 3;
 const SHOP_DISH_MARKUP = 1.3; // 商城卖菜价 = 菜价 × 1.3
 const SHOP_ING_MARKUP = 2.5;  // 商城卖食材价 = 卖价 × 2.5
 
-// 赌局：[概率, 倍数]，期望略低于 1，长期是小亏的
-const GAMBLE = [[0.54, 0], [0.27, 1.5], [0.13, 2], [0.05, 4], [0.01, 10]];
+// 转盘：[权重, 显示名, 倍数]，期望约 0.95，长期略亏
+const GAMBLE = [[54, '全输', 0], [15, '×0.5', 0.5], [20, '×2', 2], [9, '×3', 3], [2, '×10', 10]];
 
 // 24 节气（月, 日, 名称），日期为近似值
 const TERMS = [[1,5,'小寒'],[1,20,'大寒'],[2,4,'立春'],[2,19,'雨水'],[3,6,'惊蛰'],[3,21,'春分'],
@@ -115,37 +124,40 @@ function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
 
 let state = load();
 
-// ===== 天气（真实数据：Open-Meteo，失败则用离线默认）=====
-let weather = { text: '获取中…', icon: '⏳', temp: null, factor: 1, flood: false, name: LOCATION.name };
+// ===== 天气（按日历和当月气候生成，每 6 小时变化一次，不需要联网）=====
+const MONTH_TEMP = [-12, -8, 0, 10, 18, 23, 25, 24, 17, 9, -1, -9]; // 各月平均气温
+const MONTH_WET  = [1, 1, 2, 3, 3, 4, 5, 5, 3, 2, 2, 1];            // 各月降水倾向（夏季多雨）
+let weather = { text: '晴', icon: '☀️', temp: 10, factor: 1, flood: false, name: '今日' };
+let weatherKey = '';
 
-function describeWeather(code, t, p) {
+function makeWeather(d) {
+  const rnd = seeded('wx' + todayStr() + Math.floor(d.getHours() / 6)); // 同一时段结果固定
+  const m = d.getMonth();
+  const t = Math.round(MONTH_TEMP[m] + (rnd() - 0.5) * 10);
+  const wet = MONTH_WET[m] * 0.06, r = rnd(), r2 = rnd();
   let text = '晴', icon = '☀️', f = 1, flood = false;
-  if (code >= 1 && code <= 3) { text = '多云'; icon = '⛅'; }
-  else if (code === 45 || code === 48) { text = '大雾'; icon = '🌫️'; f = 0.9; }
-  else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 81)) { text = '下雨'; icon = '🌧️'; f = 1.2; }
-  else if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) { text = '下雪'; icon = '❄️'; f = 0.7; }
-  if ([65, 67, 82, 95, 96, 99].includes(code) || p >= 8) { text = '暴雨洪涝'; icon = '🌊'; f = 0.5; flood = true; }
-  else if (t <= 0) { text += '·霜冻'; f = Math.min(f, 0.6); }
-  else if (t >= 33) { text += '·高温'; f = Math.min(f, 0.8); }
-  return { text, icon, temp: t, factor: f, flood, name: LOCATION.name };
+  if (r < wet) {
+    if (t <= 0) { text = '下雪'; icon = '❄️'; f = 0.7; }
+    else if (m >= 5 && m <= 7 && r2 < 0.25) { text = '暴雨洪涝'; icon = '🌊'; f = 0.5; flood = true; }
+    else { text = '下雨'; icon = '🌧️'; f = 1.2; }
+  } else if (r < wet + 0.3) { text = '多云'; icon = '⛅'; }
+  if (!flood && text !== '下雪') {
+    if (t <= 0) { text += '·霜冻'; f = Math.min(f, 0.6); }
+    else if (t >= 30) { text += '·高温'; f = Math.min(f, 0.8); }
+  }
+  return { text, icon, temp: t, factor: f, flood, name: '今日' };
 }
 
-async function fetchWeather() {
-  try {
-    const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + LOCATION.lat + '&longitude=' + LOCATION.lon +
-      '&current=temperature_2m,precipitation,weather_code';
-    const c = (await (await fetch(url)).json()).current;
-    weather = describeWeather(c.weather_code, c.temperature_2m, c.precipitation);
-  } catch (e) {
-    weather = { text: '晴（离线模拟）', icon: '☀️', temp: null, factor: 1, flood: false, name: '离线' };
-  }
-  renderWeather();
+function refreshWeather() { // 时段变了才重新生成
+  const d = new Date(), key = todayStr() + Math.floor(d.getHours() / 6);
+  if (key === weatherKey) return;
+  weatherKey = key; weather = makeWeather(d); renderWeather();
 }
 
 function renderWeather() {
   const d = new Date(), f = favored();
   $('weather').innerHTML =
-    weather.icon + ' ' + weather.name + '：' + weather.text + (weather.temp == null ? '' : ' ' + weather.temp + '°C') +
+    weather.icon + ' ' + weather.name + '：' + weather.text + ' ' + weather.temp + '°C' +
     '　📅 ' + d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日 · ' + solarTerm(d) +
     '<br>🌱 种植速度 ×' + weather.factor + '（种下时按当前天气计算）　🌟 当季：' + CROPS[f].icon + CROPS[f].name + ' 卖价 +20%' +
     (weather.flood ? '<br>⚠️ 洪涝预警！现在种菜会很慢' : '');
@@ -254,25 +266,36 @@ function spawnOrders() { // 返回订单列表是否变化
   let changed = state.orders.length !== n;
   if (state.orders.length < MAX_ORDERS && now >= state.nextOrder) {
     const r = RECIPES[Math.floor(Math.random() * RECIPES.length)];
-    state.orders.push({ dish: r.id, exp: now + ORDER_TIME * 1000 });
+    state.orders.push({ dish: r.id, who: WHO[Math.floor(Math.random() * WHO.length)], exp: now + ORDER_TIME * 1000 });
     state.nextOrder = now + ORDER_GAP * 1000;
     changed = true;
   }
   return changed;
 }
 
-// ===== 赌局 =====
+// ===== 赌局（转盘）=====
+let spinning = false;
 function gamble(all) {
+  if (spinning) return;
   const bet = all ? state.gold : 1;
   if (bet < 1 || state.gold < bet) return ($('gambleMsg').textContent = '没有金币可押了');
-  state.gold -= bet;
-  let r = Math.random(), m = 0;
-  for (const [p, mul] of GAMBLE) { if (r < p) { m = mul; break; } r -= p; }
-  const win = Math.round(bet * m);
-  state.gold += win;
-  $('gambleMsg').textContent = (all ? '梭哈 ' : '') + '押 ' + bet + '：' +
-    (m === 0 ? '💸 输光了' : '🎉 ×' + m + '，拿回 ' + win + '（净赚 ' + (win - bet) + '）');
-  render();
+  spinning = true;
+  state.gold -= bet; $('gold').textContent = state.gold;
+  const total = GAMBLE.reduce((a, g) => a + g[0], 0);
+  let r = Math.random() * total, hit = GAMBLE[0];
+  for (const g of GAMBLE) { if (r < g[0]) { hit = g; break; } r -= g[0]; }
+  let n = 0;
+  const timer = setInterval(() => { // 转盘动画
+    $('gambleMsg').textContent = '🎡 ' + GAMBLE[n++ % GAMBLE.length][1] + ' …';
+    if (n > 14) {
+      clearInterval(timer);
+      const win = Math.floor(bet * hit[2]);
+      state.gold += win; spinning = false;
+      $('gambleMsg').textContent = (all ? '梭哈 ' : '') + '押 ' + bet + '：' +
+        (hit[2] === 0 ? '💸 全输了！' : '🎉 ' + hit[1] + '，拿回 ' + win + '（' + (win >= bet ? '净赚 ' + (win - bet) : '亏 ' + (bet - win)) + '）');
+      render();
+    }
+  }, 80);
 }
 
 // ===== 六爻（只做本卦，纯娱乐）=====
@@ -359,7 +382,7 @@ function render() {
 
   $('orders').innerHTML = state.orders.length ? state.orders.map((o, i) => {
     const r = RECIPES.find((x) => x.id === o.dish), have = state.dishes[o.dish];
-    return row('🧑 ' + r.icon + r.name + ' 奖励' + reward(r) + '💰　⏳<span class="t" data-exp="' + o.exp + '"></span>　库存 ' + have,
+    return row((o.who || '🧑') + ' ' + r.icon + r.name + ' 奖励' + reward(r) + '💰　⏳<span class="t" data-exp="' + o.exp + '"></span>　库存 ' + have,
       '<button data-serve="' + i + '"' + (have < 1 ? ' disabled' : '') + '>出餐</button>');
   }).join('') : row('暂时没有顾客，稍等一下…', '');
 
@@ -386,6 +409,7 @@ function render() {
       state.book[r.id] ? '做过 ' + state.book[r.id] + ' 次' : '');
   }).join('');
 
+  $('badge-orders').textContent = state.orders.length || '';
   renderDiv();
   updatePlots();
   updateTimers();
@@ -404,6 +428,19 @@ on('orders', '[data-serve]', 'serve', (i) => serve(Number(i)));
 on('recipes', '[data-cook]', 'cook', cook);
 on('shop', '[data-buy]', 'buy', buy);
 $('buyPlot').addEventListener('click', buyPlot);
+
+// 侧边图标 -> 弹出面板
+function closePanels() {
+  document.querySelectorAll('.panel.open').forEach((p) => p.classList.remove('open'));
+  $('backdrop').classList.remove('show');
+}
+document.querySelectorAll('[data-panel]').forEach((b) => b.addEventListener('click', () => {
+  closePanels();
+  $('p-' + b.dataset.panel).classList.add('open');
+  $('backdrop').classList.add('show');
+}));
+document.querySelectorAll('.close').forEach((b) => b.addEventListener('click', closePanels));
+$('backdrop').addEventListener('click', closePanels);
 $('bet1').addEventListener('click', () => gamble(false));
 $('betAll').addEventListener('click', () => gamble(true));
 $('castBtn').addEventListener('click', castHexagram);
@@ -418,11 +455,10 @@ buildSeeds();
 buildPlots();
 spawnOrders();
 render();
-renderWeather();
-fetchWeather();
-setInterval(fetchWeather, 30 * 60 * 1000);
+refreshWeather();
 
 setInterval(() => {
+  refreshWeather();
   updatePlots();
   if (spawnOrders()) render(); else updateTimers();
   // 防卡死：没钱、没菜、地里没种东西时，送一点启动金

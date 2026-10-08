@@ -7,73 +7,90 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <h1>🌾 小小农场餐厅</h1>
-    <div class="gold">💰 金币：<span id="gold">0</span></div>
+  <div class="app">
+    <header class="top">
+      <div class="title">🌾 小小农场餐厅</div>
+      <div class="gold">💰 <span id="gold">0</span></div>
+    </header>
 
-    <section id="weather" class="weather">天气获取中…</section>
+    <div id="weather" class="weather">⚠️ 脚本还没运行。如果一直显示这一行，请按 Ctrl+F5 刷新，或检查 script.js 是否上传成功。</div>
 
-    <section>
-      <h2>种子（先选一种，再点空地）</h2>
-      <div id="seeds" class="row"></div>
-    </section>
+    <div class="game">
+      <nav class="side">
+        <button class="icon" data-panel="inventory">📦<small>仓库</small></button>
+        <button class="icon" data-panel="orders">🧑<small>订单</small><b id="badge-orders" class="badge"></b></button>
+        <button class="icon" data-panel="kitchen">🍳<small>厨房</small></button>
+        <button class="icon" data-panel="shop">🛒<small>商城</small></button>
+      </nav>
 
-    <section>
-      <h2>农田</h2>
-      <div id="plots" class="grid"></div>
-      <button id="buyPlot"></button>
-    </section>
+      <main class="center">
+        <div id="plots" class="grid"></div>
+        <button id="buyPlot"></button>
+        <div id="seeds" class="row"></div>
+        <p id="msg">点一块空地开始种菜吧！</p>
+        <button id="reset" class="small">重置存档</button>
+      </main>
 
-    <section>
-      <h2>仓库（可直接出售）</h2>
-      <div id="inventory"></div>
-    </section>
+      <nav class="side">
+        <button class="icon" data-panel="gamble">🎰<small>赌一把</small></button>
+        <button class="icon" data-panel="div">🔮<small>六爻</small></button>
+        <button class="icon" data-panel="dex">📖<small>图鉴</small></button>
+        <button class="icon" data-panel="book">📜<small>菜单</small></button>
+      </nav>
+    </div>
+  </div>
 
-    <section>
-      <h2>🧑 顾客订单（没有现成的菜？去下面的商城买）</h2>
-      <div id="orders"></div>
-    </section>
+  <div id="backdrop"></div>
 
-    <section>
-      <h2>🍳 厨房（做好的菜放进库存，用来出餐）</h2>
-      <div id="recipes"></div>
-    </section>
+  <section class="panel" id="p-inventory">
+    <h2>📦 仓库（可直接出售）<button class="close">✕</button></h2>
+    <div id="inventory"></div>
+  </section>
 
-    <section>
-      <h2>🛒 商城</h2>
-      <div id="shop"></div>
-    </section>
+  <section class="panel" id="p-orders">
+    <h2>🧑 顾客订单<button class="close">✕</button></h2>
+    <p class="hint">没有现成的菜？去商城买，或者去厨房做。</p>
+    <div id="orders"></div>
+  </section>
 
-    <section>
-      <h2>🎰 赌一把（虚拟金币，纯娱乐）</h2>
-      <div class="row">
-        <button id="bet1">押 1 金币</button>
-        <button id="betAll">梭哈！</button>
-      </div>
-      <p class="hint">赢的倍数：×0 / ×1.5 / ×2 / ×4 / ×10。押得越多，赢得越多，输得也越多。</p>
-      <p id="gambleMsg"></p>
-    </section>
+  <section class="panel" id="p-kitchen">
+    <h2>🍳 厨房<button class="close">✕</button></h2>
+    <p class="hint">做好的菜放进库存，用来给顾客出餐。</p>
+    <div id="recipes"></div>
+  </section>
 
-    <section>
-      <h2>🔮 每日六爻</h2>
-      <button id="castBtn">起卦（每天一次）</button>
-      <pre id="hex"></pre>
-      <p class="hint">仅供娱乐：卦象会轻微影响今天的稀有率和双倍率。</p>
-    </section>
+  <section class="panel" id="p-shop">
+    <h2>🛒 商城<button class="close">✕</button></h2>
+    <div id="shop"></div>
+  </section>
 
-    <section>
-      <h2>📖 种植图鉴</h2>
-      <div id="dex"></div>
-    </section>
+  <section class="panel" id="p-gamble">
+    <h2>🎰 赌一把（虚拟金币，纯娱乐）<button class="close">✕</button></h2>
+    <div class="row">
+      <button id="bet1">押 1 金币</button>
+      <button id="betAll">梭哈！</button>
+    </div>
+    <p class="hint">转盘格子：全输 / ×0.5 / ×2 / ×3 / ×10。押得越多，赢得越多，输得也越多。</p>
+    <p id="gambleMsg"></p>
+  </section>
 
-    <section>
-      <h2>📜 菜单大全</h2>
-      <div id="book"></div>
-    </section>
+  <section class="panel" id="p-div">
+    <h2>🔮 每日六爻<button class="close">✕</button></h2>
+    <button id="castBtn">起卦（每天一次）</button>
+    <pre id="hex"></pre>
+    <p class="hint">仅供娱乐：卦象会轻微影响今天的稀有率和双倍率。</p>
+  </section>
 
-    <p id="msg">点一块空地开始种菜吧！</p>
-    <button id="reset" class="small">重置存档</button>
-  </main>
+  <section class="panel" id="p-dex">
+    <h2>📖 种植图鉴<button class="close">✕</button></h2>
+    <div id="dex"></div>
+  </section>
+
+  <section class="panel" id="p-book">
+    <h2>📜 菜单大全<button class="close">✕</button></h2>
+    <div id="book"></div>
+  </section>
+
   <script src="script.js"></script>
 </body>
 </html>
