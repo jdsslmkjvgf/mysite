@@ -3,25 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的第一个网页</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      max-width: 600px;
-      margin: 40px auto;
-      text-align: center;
-    }
-    h1 { color: #2c7be5; }
-    button {
-      padding: 8px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+  <title>小小农场餐厅</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>你好，世界！</h1>
-  <p>这是我的第一个网页。</p>
-  <button onclick="alert('你是一只猪！')">点我</button>
+  <main>
+    <h1>🌾 小小农场餐厅</h1>
+    <div class="gold">💰 金币：<span id="gold">0</span></div>
+
+    <section>
+      <h2>种子（先选一种，再点空地）</h2>
+      <div id="seeds" class="row"></div>
+    </section>
+
+    <section>
+      <h2>农田</h2>
+      <div id="plots" class="grid"></div>
+      <button id="buyPlot"></button>
+    </section>
+
+    <section>
+      <h2>仓库（可直接出售）</h2>
+      <div id="inventory"></div>
+    </section>
+
+    <section>
+      <h2>厨房（做好的菜自动卖给顾客）</h2>
+      <div id="recipes"></div>
+    </section>
+
+    <p id="msg">点一块空地开始种菜吧！</p>
+    <button id="reset" class="small">重置存档</button>
+  </main>
+  <script src="script.js"></script>
 </body>
 </html>
