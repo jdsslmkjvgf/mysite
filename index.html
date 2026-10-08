@@ -11,6 +11,8 @@
     <h1>🌾 小小农场餐厅</h1>
     <div class="gold">💰 金币：<span id="gold">0</span></div>
 
+    <section id="weather" class="weather">天气获取中…</section>
+
     <section>
       <h2>种子（先选一种，再点空地）</h2>
       <div id="seeds" class="row"></div>
@@ -28,8 +30,45 @@
     </section>
 
     <section>
-      <h2>厨房（做好的菜自动卖给顾客）</h2>
+      <h2>🧑 顾客订单（没有现成的菜？去下面的商城买）</h2>
+      <div id="orders"></div>
+    </section>
+
+    <section>
+      <h2>🍳 厨房（做好的菜放进库存，用来出餐）</h2>
       <div id="recipes"></div>
+    </section>
+
+    <section>
+      <h2>🛒 商城</h2>
+      <div id="shop"></div>
+    </section>
+
+    <section>
+      <h2>🎰 赌一把（虚拟金币，纯娱乐）</h2>
+      <div class="row">
+        <button id="bet1">押 1 金币</button>
+        <button id="betAll">梭哈！</button>
+      </div>
+      <p class="hint">赢的倍数：×0 / ×1.5 / ×2 / ×4 / ×10。押得越多，赢得越多，输得也越多。</p>
+      <p id="gambleMsg"></p>
+    </section>
+
+    <section>
+      <h2>🔮 每日六爻</h2>
+      <button id="castBtn">起卦（每天一次）</button>
+      <pre id="hex"></pre>
+      <p class="hint">仅供娱乐：卦象会轻微影响今天的稀有率和双倍率。</p>
+    </section>
+
+    <section>
+      <h2>📖 种植图鉴</h2>
+      <div id="dex"></div>
+    </section>
+
+    <section>
+      <h2>📜 菜单大全</h2>
+      <div id="book"></div>
     </section>
 
     <p id="msg">点一块空地开始种菜吧！</p>
